@@ -61,6 +61,7 @@ class TVS_REST_Support_for_Custom_Post_Types {
 		$this->post_types[] = 'terms';
 		$this->post_types[] = 'attendance_summaries'; //note the underscore, not a hyphen -- CPT UI now changes this for us??
 		$this->post_types[] = 'results';
+		$this->post_types[] = 'achievement_totals';
 
 		$this->field_info = new stdClass();
 
