@@ -9,7 +9,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
 
-/* Copyright (C) 2016-2017 Test Valley School.
+/* Copyright (C) 2016-2018 Test Valley School.
 
 
     This program is free software; you can redistribute it and/or
@@ -42,26 +42,27 @@ class TVS_REST_Support_for_Custom_Post_Types {
 	 */
 	protected $field_info = null;
 
+
+	/**
+	 * Wrapper to call register_post_type and add the post type
+	 * to our internal list of post types that we handle.
+	 */
+	protected function register( $post_type, $args ) {
+		$this->post_types[] = $post_type;
+		register_post_type( $post_type, $args );
+	}
+
 	/**
 	 * Set up the object, adding actions to WP and setting up post type
 	 * information.
 	 */
 	public function __construct() {
+		add_action( 'init', array( $this, 'register_new_post_types' ), 5 );
+		add_action( 'init', array( $this, 'register_new_taxonomies' ), 6 );
 		if ( function_exists( 'CFS' ) ) {
 			add_action( 'init', array( $this, 'assign_custom_posts_controller' ), 999 );
 			add_action( 'rest_api_init', array( $this, 'register_all_cpt_cfs_fields' ), 999 );
 		}
-
-		$this->post_types = array();
-		$this->post_types[] = 'lunch-menus';
-                $this->post_types[] = 'lunch-weeks';
-		$this->post_types[] = 'achievements';
-		$this->post_types[] = 'attendance-marks';
-		$this->post_types[] = 'behaviour-incidents';
-		$this->post_types[] = 'terms';
-		$this->post_types[] = 'attendance_summaries'; //note the underscore, not a hyphen -- CPT UI now changes this for us??
-		$this->post_types[] = 'results';
-		$this->post_types[] = 'achievement_totals';
 
 		$this->field_info = new stdClass();
 
@@ -69,6 +70,19 @@ class TVS_REST_Support_for_Custom_Post_Types {
 		add_action( 'wp_ajax_sanitize_title', array( $this, 'sanitize_title' ), 99, 1 );
 	}
 
+	/**
+	 * Called during the init action, add our custom post types to WordPress.
+	 */
+	public function register_new_post_types() {
+		require_once( dirname( __FILE__ ) . '/post-types.php' );
+	}
+
+	/**
+	 * Register the new taxonomies that we use.
+	 */
+	public function register_new_taxonomies() {
+		require_once( dirname( __FILE__ ) . '/taxonomies.php' );
+	}
 
 	/**
 	 * Register our custom posts controller that fixes permissions.
