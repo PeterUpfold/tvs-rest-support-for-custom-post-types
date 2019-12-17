@@ -161,6 +161,10 @@ class TVS_REST_Support_for_Custom_Post_Types {
 			// get all meta keys for this post type to add to orderby params
 			$meta_keys = $this->field_info->$post_type_name;
 
+			if ( ! is_array( $meta_keys ) ) {
+				continue;
+			}
+
 			$param_keys = array_merge( $meta_keys, array(
 				'date',
 				'id',
@@ -169,7 +173,7 @@ class TVS_REST_Support_for_Custom_Post_Types {
 				'date am_pm', // hack to allow multiple level sorting -- do we need to generalise this? TODO
 			) );
 
-			if ( is_array( $meta_keys ) && count( $meta_keys ) > 0 ) {
+			if ( count( $meta_keys ) > 0 ) {
 				$params['orderby'] = array(
 					'description' => __( 'Sort collection by object attribute.' ),
 					'type'        => 'string',
